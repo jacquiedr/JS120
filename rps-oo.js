@@ -171,7 +171,7 @@ const RPSGame = {
     while (true) {
       answer = readline.question().toLowerCase();
       if (answer === 'h') {
-        console.log("");
+        this.printEmptyLine();
         let humanNumMoves = Math.min(this.human.history.length, 5);
         let compNumMoves = Math.min(this.computer.history.length, 5);
         console.log(`${this.human.name}'s past ${humanNumMoves} moves: ${this.human.history.slice(-5).join(', ')}`);
