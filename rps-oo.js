@@ -165,24 +165,22 @@ const RPSGame = {
     }
   },
 
-  // eslint-disable-next-line max-statements
   displayHistory() {
-    this.printEmptyLine();
-    console.log("Enter 'h' to see history of past moves, or else press 'enter' key to continue.");
+    console.log("\nEnter 'h' to see history of past moves, or press 'enter' to continue.");
     let answer;
     while (true) {
       answer = readline.question().toLowerCase();
       if (answer === 'h') {
-        this.printEmptyLine();
-        let humanHistory = this.human.history;
-        let compHistory = this.computer.history;
-        let humanNumMoves = humanHistory.length > 5 ? 5 : humanHistory.length;
-        let compNumMoves = compHistory.length > 5 ? 5 : compHistory.length;
-        console.log(`${this.human.name}'s past ${humanNumMoves} moves: ${humanHistory.slice(-5).join(', ')}`);
-        console.log(`Computer's past ${compNumMoves} moves: ${compHistory.slice(-5).join(', ')}`);
+        console.log("");
+        let humanNumMoves = Math.min(this.human.history.length, 5);
+        let compNumMoves = Math.min(this.computer.history.length, 5);
+        console.log(`${this.human.name}'s past ${humanNumMoves} moves: ${this.human.history.slice(-5).join(', ')}`);
+        console.log(`Computer's past ${compNumMoves} moves: ${this.computer.history.slice(-5).join(', ')}`);
         break;
-      } else if (answer === '') break;
-      console.log("Sorry, invalid input! Please enter 'h' or press 'enter' key.");
+      } else if (answer === '') {
+        break;
+      }
+      console.log("Sorry, invalid input! Please enter 'h' or press 'enter'.");
     }
     return answer;
   },
