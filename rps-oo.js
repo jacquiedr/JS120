@@ -26,21 +26,6 @@ const RPSGame = {
   round: START_ROUND_COUNT,
   roundInMatch: NUM_OF_ROUNDS,
 
-  getHumanName() {
-    let inputName;
-    this.printEmptyLine();
-
-    while (true) {
-      inputName = readline.question('Please enter your name to get started: ').trim();
-
-      if (![undefined, null, NaN, ''].includes(inputName)) break;
-      console.log('That is not valid input.');
-    }
-
-    this.human.name = inputName;
-    return inputName;
-  },
-
   printEmptyLine() {
     console.log('');
   },
@@ -54,7 +39,7 @@ const RPSGame = {
   },
 
   displayWelcomeMessage() {
-    let humanName = this.getHumanName();
+    let humanName = this.human.getHumanName();
     this.clearScreen();
     console.log(`Hi, ${humanName}!`);
     this.printEmptyLine();
@@ -267,11 +252,28 @@ function createPlayer() {
   };
 }
 
+// eslint-disable-next-line max-lines-per-function
 function createHuman() {
   let playerObject = createPlayer();
 
   let humanObject = {
     name: null,
+
+    getHumanName() {
+      let inputName;
+      console.log('');
+
+      while (true) {
+        inputName = readline.question('Please enter your name to get started: ').trim();
+
+        if (![undefined, null, NaN, ''].includes(inputName)) break;
+        console.log('That is not valid input.');
+      }
+
+      this.name = inputName;
+      return inputName;
+    },
+
     choose() {
       let choice;
 
