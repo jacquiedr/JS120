@@ -38,6 +38,7 @@ const RPSGame = {
     }
 
     this.human.name = inputName;
+    return inputName;
   },
 
   printEmptyLine() {
@@ -53,9 +54,9 @@ const RPSGame = {
   },
 
   displayWelcomeMessage() {
-    this.getHumanName();
+    let humanName = this.getHumanName();
     this.clearScreen();
-    console.log(`Hi, ${this.human.name}!`);
+    console.log(`Hi, ${humanName}!`);
     this.printEmptyLine();
     console.log('Welcome to Rock, Paper, Scissors, Lizard, Spock.');
   },
