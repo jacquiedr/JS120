@@ -38,8 +38,7 @@ const RPSGame = {
     readline.question('\nPress \'enter\' to continue');
   },
 
-  displayWelcomeMessage() {
-    let humanName = this.human.getHumanName();
+  displayWelcomeMessage(humanName) {
     this.clearScreen();
     console.log(`Hi, ${humanName}!`);
     this.printEmptyLine();
@@ -216,7 +215,8 @@ const RPSGame = {
   },
 
   play() {
-    this.displayWelcomeMessage();
+    let humanName = this.human.getHumanName();
+    this.displayWelcomeMessage(humanName);
     this.displayRules();
 
     while (true) {
