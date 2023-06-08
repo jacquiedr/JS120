@@ -14,22 +14,29 @@ const WINNING_COMBOS = {
   spock: ['scissors', 'rock'],
   lizard: ['spock', 'paper']
 };
+const STARTING_SCORE = 0;
+const START_ROUND_COUNT = 0;
+const PAST_MOVES = 5;
+const NUM_OF_ROUNDS = 5;
 
 
 const RPSGame = {
   human: createHuman(),
   computer: createComputer(),
-  round: 0,
-  roundInMatch: 5,
+  round: START_ROUND_COUNT,
+  roundInMatch: NUM_OF_ROUNDS,
 
   getHumanName() {
     let inputName;
     this.printEmptyLine();
+
     while (true) {
       inputName = readline.question('Please enter your name to get started: ').trim();
+
       if (![undefined, null, NaN, ''].includes(inputName)) break;
       console.log('That is not valid input.');
     }
+
     this.human.name = inputName;
   },
 
@@ -55,9 +62,11 @@ const RPSGame = {
 
   displayRules() {
     this.printEmptyLine();
+
     Object.keys(WINNING_COMBOS).forEach(choice => {
       console.log(`${choice.toUpperCase()} beats ${WINNING_COMBOS[choice][0].toUpperCase()} and ${WINNING_COMBOS[choice][1].toUpperCase()}`);
     });
+
     this.printEmptyLine();
     console.log('You will be playing best of five rounds against Computer. Best of luck!');
     this.freezeGame();
@@ -71,6 +80,7 @@ const RPSGame = {
   getWinnerOfRound() {
     let humanMove = this.human.move;
     let computerMove = this.computer.move;
+
     if (WINNING_COMBOS[humanMove].includes(computerMove)) {
       return 'Human';
     } else if (WINNING_COMBOS[computerMove].includes(humanMove)) {
@@ -85,7 +95,9 @@ const RPSGame = {
     console.log(`You chose: ${(this.human.move).toUpperCase()}`);
     console.log(`The computer chose: ${(this.computer.move).toUpperCase()}`);
     this.printEmptyLine();
+
     let winner = this.getWinnerOfRound();
+
     if (winner === 'Human') {
       console.log(`${this.human.name} won the round!`);
     } else if (winner === 'Computer') {
@@ -97,6 +109,7 @@ const RPSGame = {
 
   updateScoreBoard() {
     let winner = this.getWinnerOfRound();
+
     if (winner === 'Human') {
       this.human.score += 1;
     } else if (winner === 'Computer') {
@@ -114,11 +127,13 @@ const RPSGame = {
   playAgain() {
     console.log('Would you like to play again? (y/n)');
     let answer;
+
     while (true) {
       answer = readline.question().toLowerCase();
       if (['no', 'n', 'yes', 'y'].includes(answer)) break;
       console.log('Invalid input!');
     }
+
     return answer;
   },
 
@@ -137,18 +152,21 @@ const RPSGame = {
     } else if (this.human.score > this.computer.score) {
       return 'Human';
     }
+
     return 'Tie';
   },
 
   detectMajorityWon() {
     let majorityRounds = Math.ceil(this.roundInMatch / 2);
+
     if ((this.computer.score >= majorityRounds) ||
-    (this.computer.score === 5)) {
+    (this.computer.score === NUM_OF_ROUNDS)) {
       return 'Computer';
     } else if ((this.human.score >= majorityRounds) ||
-    (this.human.score === 5)) {
+    (this.human.score === NUM_OF_ROUNDS)) {
       return 'Human';
     }
+
     return null;
   },
 
@@ -168,27 +186,30 @@ const RPSGame = {
   displayHistory() {
     console.log("\nEnter 'h' to see history of past moves, or press 'enter' to continue.");
     let answer;
+
     while (true) {
       answer = readline.question().toLowerCase();
+
       if (answer === 'h') {
         this.printEmptyLine();
-        let humanNumMoves = Math.min(this.human.history.length, 5);
-        let compNumMoves = Math.min(this.computer.history.length, 5);
-        console.log(`${this.human.name}'s past ${humanNumMoves} moves: ${this.human.history.slice(-5).join(', ')}`);
-        console.log(`Computer's past ${compNumMoves} moves: ${this.computer.history.slice(-5).join(', ')}`);
+        let humanNumMoves = Math.min(this.human.history.length, PAST_MOVES);
+        let compNumMoves = Math.min(this.computer.history.length, PAST_MOVES);
+        console.log(`${this.human.name}'s past ${humanNumMoves} moves: ${this.human.history.slice(-PAST_MOVES).join(', ')}`);
+        console.log(`Computer's past ${compNumMoves} moves: ${this.computer.history.slice(-PAST_MOVES).join(', ')}`);
         break;
       } else if (answer === '') {
         break;
       }
+
       console.log("Sorry, invalid input! Please enter 'h' or press 'enter'.");
     }
     return answer;
   },
 
   resetGame() {
-    this.human.score = 0;
-    this.computer.score = 0;
-    this.round = 0;
+    this.human.score = STARTING_SCORE;
+    this.computer.score = STARTING_SCORE;
+    this.round = START_ROUND_COUNT;
   },
 
   playRound() {
@@ -202,6 +223,7 @@ const RPSGame = {
     this.displayWinnerOfRound();
     this.updateScoreBoard();
     let history = this.displayHistory();
+
     if (history) {
       this.freezeGame();
     }
@@ -210,18 +232,22 @@ const RPSGame = {
   play() {
     this.displayWelcomeMessage();
     this.displayRules();
+
     while (true) {
       this.resetGame();
+
       while (this.round < this.roundInMatch) {
         this.playRound();
         if (this.detectMajorityWon()) break;
       }
+
       this.clearScreen();
       this.displayScoreBoard('Final');
       this.displayWinnerOfMatch(this.detectWinnerOfMatch());
       let wantsToPlayAgain = this.playAgain();
       if (wantsToPlayAgain === 'n' || wantsToPlayAgain === 'no') break;
     }
+
     this.displayGoodbyeMessage();
   },
 
@@ -230,8 +256,13 @@ const RPSGame = {
 function createPlayer() {
   return {
     move: null,
-    score: 0,
+    score: STARTING_SCORE,
     history: [],
+
+    addMoveToHistory(move) {
+      this.history.push(move);
+    },
+
   };
 }
 
@@ -251,7 +282,7 @@ function createHuman() {
       }
 
       this.move = choice in SHORT_INPUTS ? SHORT_INPUTS[choice] : choice;
-      this.history.push(this.move);
+      this.addMoveToHistory(this.move);
     },
   };
 
@@ -261,13 +292,15 @@ function createHuman() {
 function createComputer() {
   let playerObject = createPlayer();
   let choices = Object.keys(WINNING_COMBOS);
+
   let computerObject = {
     choose() {
       let randomIndex = Math.floor(Math.random() * choices.length);
       this.move = choices[randomIndex];
-      this.history.push(this.move);
+      this.addMoveToHistory(this.move);
     },
   };
+
   return Object.assign(playerObject, computerObject);
 }
 
